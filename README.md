@@ -9,5 +9,5 @@ New srt files with the same name will be created.
 ## Environment request
 **Python** 3.6+
 
-## Chinese Version 
-- [中文版点击这里](ChineseREADME.md)
+## Original Chinese Version 
+- https://github.com/yxh0/bilibili_jsonToSRT/tree/master

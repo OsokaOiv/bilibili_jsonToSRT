@@ -2,35 +2,38 @@ import json
 import math
 import os
 
-file = ''  # 这个变量用来保存数据
+file = ''  # This variable is used to save data
 i = 1
-for doc in os.listdir():  # 遍历当前文件夹的所有文件
-    if doc[-4:] == 'json':  # 若是json文件则进行处理
-        name = doc[:-5]  # 提取文件名
-        # 将此处文件位置进行修改，加上utf-8是为了避免处理中文时报错
+for doc in os.listdir():  # Traverse all files in the current folder
+    if doc[-4:] == 'json':  # If it is a json file, process it
+        name = doc[:-5]  # Extract the file name
+        # Modify the file location here, add utf-8 to avoid errors when processing Chinese
         with open(doc, encoding='utf-8') as f:
-            datas = json.load(f)  # 加载文件数据
+            datas = json.load(f)  # Load file data
             f.close()
         for data in datas['body']:
-            start = data['from']  # 获取开始时间
-            stop = data['to']  # 获取结束时间
-            content = data['content']  # 获取字幕内容
-            file += '{}\n'.format(i)  # 加入序号
+            start = data['from']  # Get start time
+            stop = data['to']  # Get end time
+            content = data['content']  # Get subtitle content
+            file += '{}\n'.format(i)  # Add serial number
             hour = math.floor(start) // 3600
             minute = (math.floor(start) - hour * 3600) // 60
             sec = math.floor(start) - hour * 3600 - minute * 60
-            min_sec = int(math.modf(start)[0] * 100)  # 处理开始时间
+            mil_sec = int((start - hour * 3600 - minute * 60 - sec)*1000)
             file += str(hour).zfill(2) + ':' + str(minute).zfill(2) + ':' + str(sec).zfill(2) + ',' + str(
-                min_sec).zfill(2)  # 将数字填充0并按照格式写入
+                mil_sec).zfill(2)  # Fill the number with 0 and write it according to the format
             file += ' --> '
             hour = math.floor(stop) // 3600
             minute = (math.floor(stop) - hour * 3600) // 60
             sec = math.floor(stop) - hour * 3600 - minute * 60
-            min_sec = abs(int(math.modf(stop)[0] * 100 - 1))  # 此处减1是为了防止两个字幕同时出现
+            mil_sec = abs(int((stop - hour * 3600 - minute * 60 - sec)*1000))
             file += str(hour).zfill(2) + ':' + str(minute).zfill(2) + ':' + str(sec).zfill(2) + ',' + str(
-                min_sec).zfill(2)
-            file += '\n' + content + '\n\n'  # 加入字幕文字
+                mil_sec).zfill(2)
+            file += '\n' + content + '\n\n'  # Add subtitle text
             i += 1
         with open('./{}.srt'.format(name), 'w', encoding='utf-8') as f:
-            f.write(file)  # 将数据写入文件
+            f.write(file)  # Write data to file
             f.close()
+        file = ''
+        i = 1
+
